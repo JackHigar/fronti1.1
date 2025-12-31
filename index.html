@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fronti - Image to Code</title>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #0d0d0d;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ccc;
+            position: relative;
+        }
+        .container {
+            width: 70%;
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 10px 10px 30px rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        .drop-box {
+            border: 2px dashed #777;
+            padding: 20px;
+            border-radius: 10px;
+            background: #1a1a1a;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .drop-box.dragover {
+            background: #222;
+        }
+        input[type="file"], textarea {
+            width: 100%;
+            background: #262626;
+            color: #ccc;
+            border: 2px solid #777;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            outline: none;
+        }
+        .code-output {
+            background: #141414;
+            color: #ccc;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            border: 2px solid #777;
+            min-height: 150px;
+        }
+        button {
+            background: linear-gradient(145deg, #222, #333);
+            color: #ccc;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        button:hover {
+            background: linear-gradient(145deg, #333, #444);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fronti - Convert UI Images to Code</h1>
+        <p>Upload UI design images, describe them, and generate structured code.</p>
+        <form id="upload-form">
+            <input type="file" id="image-upload" accept="image/*" required>
+            <textarea id="description" placeholder="Describe the UI..." required></textarea>
+            <button type="submit">Generate Code</button>
+        </form>
+        <h2>Generated Code:</h2>
+        <div class="code-output" id="code-output"></div>
+    </div>
+    
+    <script>
+        document.getElementById("upload-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let image = document.getElementById("image-upload").files[0];
+            let description = document.getElementById("description").value;
+            
+            if (!image || !description) {
+                alert("Please upload an image and provide a description.");
+                return;
+            }
+            
+            let formData = new FormData();
+            formData.append("image", image);
+            formData.append("description", description);
+            
+            fetch("/generate-code", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("code-output").textContent = data.generated_code;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
